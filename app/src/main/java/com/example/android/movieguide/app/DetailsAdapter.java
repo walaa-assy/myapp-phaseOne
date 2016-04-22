@@ -18,7 +18,8 @@ public class DetailsAdapter extends ArrayAdapter<Reviews>{
     //ArrayList<Reviews> movieReviews;
 
 
-    public DetailsAdapter(Context context, ArrayList<Reviews> users) {
+    public DetailsAdapter(Context context, ArrayList<Reviews> users)
+    {
         super(context, 0, users);
     }
 

@@ -40,14 +40,40 @@
         android:layout_below="@id/backdrop_image_view"
         android:layout_toRightOf="@id/poster_image_view"
         android:layout_marginLeft="32dp"
-        android:layout_marginTop="32dp"/>
+        android:layout_marginTop="32dp" />
+
+    <RatingBar
+        android:id="@+id/rating_bar"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:rating="2.5"
+        android:stepSize="0.5"
+        android:layout_below="@id/title_text_view"
+        android:layout_toRightOf="@id/poster_image_view"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/releaseDate_text_view"
+        android:layout_width="30dp"
+        android:layout_height="10dp"
+        android:textColor="@android:color/black"
+        android:background="#8BC34A"
+        android:layout_below="@id/title_text_view"
+        android:layout_toRightOf="@id/rating_bar"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="75dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/overview_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:layout_below="@id/title_text_view"
+        android:layout_below="@id/rating_bar"
         android:layout_toRightOf="@id/poster_image_view"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
@@ -59,14 +85,27 @@
     android:layout_below="@id/poster_image_view"
     android:layout_marginTop="32dp"
     android:layout_marginLeft="32dp"
+    android:layout_marginRight="32dp"
     android:layout_alignParentBottom="true"
     android:orientation="vertical">
+
+    <View
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#4E4B4F" />
 
     <ListView
         android:id="@+id/trailers_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp" />
+        android:layout_marginTop="10dp" />
+
+    <View
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#4E4B4F" />
 
     <ListView
         android:id="@+id/reviews_listview"

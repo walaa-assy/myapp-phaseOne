@@ -140,6 +140,7 @@ public class MovieInfo implements Parcelable {
         dest.writeDouble(moviePopularity);
         dest.writeString(movieLanguage);
         dest.writeString(String.valueOf(movieVideo));
+        dest.writeString(movieReleaseDate);
         dest.writeString(movieTrailerKey);
         dest.writeString(movieReviewURL);
     }

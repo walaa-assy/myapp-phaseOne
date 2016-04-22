@@ -1,8 +1,11 @@
 package com.example.android.movieguide.app.data;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.example.android.movieguide.app.MovieInfo;
 
 /**
  * Created by Administrator on 4/18/2016.
@@ -25,14 +28,32 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
         // By default foreign_key=off - cascading deletes will not work
         db.execSQL("PRAGMA foreign_keys=ON");
     }
-    /**
-     * Called when the database is created for the first time. This is where the
-     * creation of tables and the initial population of the tables should happen.
-     *
-     * @param db The database.
-     */
+
+    public  void addFAVORITEMOVIE(MovieInfo favMovie){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(MoviesContract.FAVORITEMOVIES.COLUMN_MovieID , favMovie.getMovieId());
+        values.put(MoviesContract.FAVORITEMOVIES.COLUMN_TITLE, favMovie.getTitle());
+        values.put(MoviesContract.FAVORITEMOVIES.COLUMN_OVERVIEW , favMovie.getOverview());
+        values.put(MoviesContract.FAVORITEMOVIES.COLUMN_POSTERPATH , favMovie.getPosterPath());
+        values.put(MoviesContract.FAVORITEMOVIES.COLUMN_BACKDROPPATH, favMovie.getBackdropPath());
+        values.put(MoviesContract.FAVORITEMOVIES.COLUMN_RELEASEDATE, favMovie.getReleaseDate());
+        values.put(MoviesContract.FAVORITEMOVIES.COLUMN_VOTEAVERAGE, favMovie.getVoteAverage());
+        values.put(MoviesContract.FAVORITEMOVIES.COLUMN_POPULARITY, favMovie.getPopularity());
+        values.put(MoviesContract.FAVORITEMOVIES.COLUMN_VOTECOUNT, favMovie.getVoteCount());
+        values.put(MoviesContract.FAVORITEMOVIES.COLUMN_IS_FAVORITE, "true");
+
+
+        db.insert("FAVORITEMOVIES",null, values);
+        db.close();
+
+    }
+
+
     @Override
     public void onCreate(SQLiteDatabase db) {
+
 
         // SQL statement to create the favoritemovies table
         final String FAVORITESMOVIES_TABLE_CREATE =
@@ -86,6 +107,7 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
         db.execSQL(TRAILERS_TABLE_CREATE);
 
     }
+
 
     /**
      * Called when the database needs to be upgraded. The implementation
