@@ -1,6 +1,5 @@
 package com.example.android.movieguide.app;
 
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -14,10 +13,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.android.movieguide.app.data.MoviesDBHelper;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -70,11 +73,13 @@ public class DetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     /**
      * A placeholder fragment containing a simple view.
      */
     public static class DetailFragment extends Fragment {
 
+        private MovieInfo m;
         private DetailsAdapter dAdapter;
         private ArrayList<Reviews> rev = new ArrayList<>();
         private ListView listview;
@@ -89,6 +94,15 @@ public class DetailActivity extends ActionBarActivity {
         public DetailFragment() {
         }
 
+        public void insertFavoriteMovies() {
+
+            MoviesDBHelper helper = new MoviesDBHelper(getActivity());
+            helper.getWritableDatabase();
+            if (helper.addFAVORITEMOVIES(m) != -1) {
+                Toast.makeText(getActivity(), "successfully added", Toast.LENGTH_LONG).show();
+            }
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -97,7 +111,7 @@ public class DetailActivity extends ActionBarActivity {
 
 
             Intent i = getActivity().getIntent();
-            MovieInfo m = (MovieInfo) i.getParcelableExtra("com.example.android.movieguide.app.MovieInfo");
+            m = (MovieInfo) i.getParcelableExtra("com.example.android.movieguide.app.MovieInfo");
 
             String number = m.getMovieId();
             String title = m.getTitle();
@@ -106,7 +120,9 @@ public class DetailActivity extends ActionBarActivity {
             String detailPosterStr = m.getDetailPoster();
             String overview = m.getOverview();
             String rd = m.getReleaseDate();
-            double vote = m.getVoteAverage();
+            //String rd = i.getStringExtra("releaseDate");
+            //Toast.makeText(getActivity(), "rd = " + rd, Toast.LENGTH_LONG).show();
+            float vote = (float) m.getVoteAverage();
             double popularity = m.getPopularity();
 
             ImageView backDrop = (ImageView) rootView.findViewById(R.id.backdrop_image_view);
@@ -121,7 +137,12 @@ public class DetailActivity extends ActionBarActivity {
             TextView rdText = (TextView) rootView.findViewById(R.id.releaseDate_text_view);
             rdText.setText(rd);
 
-           //((TextView) rootView.findViewById(R.id.releaseDate_text_view)).setText(rd);
+            RatingBar voteRatingBar = (RatingBar) rootView.findViewById(R.id.rating_bar);
+            voteRatingBar.setStepSize((float) 0.5);
+            float fVote = vote / 2;
+           voteRatingBar.setRating(vote);
+
+            //((TextView) rootView.findViewById(R.id.releaseDate_text_view)).setText(rd);
 //            ((TextView) rootView.findViewById(R.id.voteAverage_text_View)).setText(String.valueOf(vote));
 //            TextView t = (TextView) rootView.findViewById(R.id.title_text);
 //            t.setText(title);
@@ -132,14 +153,14 @@ public class DetailActivity extends ActionBarActivity {
             FetchReviewsTask reviewsTask = new FetchReviewsTask();
             reviewsTask.execute(number);
 
-             ArrayList<ExtraBase> t = new ArrayList<>();
+            ArrayList<ExtraBase> t = new ArrayList<>();
             ListView tList = (ListView) rootView.findViewById(R.id.trailers_listview);
-            cAdapter = new CommonAdapter(getActivity(),t);
+            cAdapter = new CommonAdapter(getActivity(), t);
             tList.setAdapter(cAdapter);
-            tList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            tList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                    ExtraBase b  = cAdapter.getItem(position);
+                    ExtraBase b = cAdapter.getItem(position);
                     Uri uri = Uri.parse(b.getKey());
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(intent);
@@ -150,13 +171,21 @@ public class DetailActivity extends ActionBarActivity {
 //            DetailsAdapter adapter = new DetailsAdapter(getActivity(), arrayOfUsers);
 //            ListView listView = (ListView) rootView.findViewById(R.id.reviews_listview);
 //            listView.setAdapter(adapter);
-           listview = (ListView) rootView.findViewById(R.id.reviews_listview);
+            listview = (ListView) rootView.findViewById(R.id.reviews_listview);
             dAdapter = new DetailsAdapter(getActivity(), rev);
             listview.setAdapter(dAdapter);
 
+            final Button addFAV = (Button) rootView.findViewById(R.id.fav_button);
+            addFAV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    insertFavoriteMovies();
+                    //addFAV.setBackground(movies);
+                }
+            });
+
             return rootView;
         }
-
 
 
         public class FetchReviewsTask extends AsyncTask<String, Void, ArrayList<Reviews>> {
@@ -164,17 +193,15 @@ public class DetailActivity extends ActionBarActivity {
             private final String LOG_TAG = FetchReviewsTask.class.getSimpleName();
 
 
-
             private ArrayList<Reviews> getReviewsDataFromJson(String jsonStr)
                     throws JSONException {
                 // JSON Node names
-                final String TAG_MOVIE_NUMBER= "id";
+                final String TAG_MOVIE_NUMBER = "id";
                 final String TAG_RESULT = "results";
                 final String TAG_REVIEW_ID = "id";
-                final String TAG_REVIEW_AUTHOR= "author";
-                final String TAG_REVIEW_CONTENT= "content";
-                final String TAG_REVIEW_URL= "url";
-
+                final String TAG_REVIEW_AUTHOR = "author";
+                final String TAG_REVIEW_CONTENT = "content";
+                final String TAG_REVIEW_URL = "url";
 
 
                 JSONObject reviewsDataJson = new JSONObject(jsonStr);
@@ -204,7 +231,7 @@ public class DetailActivity extends ActionBarActivity {
 //                    movieReview.setMovieID(movieNumber);
 //                    movieReview.setMovieReviewURL(url);
 
-                    Reviews movieReview = new Reviews(movieNumber, reviewID , author , content ,url);
+                    Reviews movieReview = new Reviews(movieNumber, reviewID, author, content, url);
 
                     ReviewsList.add(i, movieReview);
 
@@ -309,12 +336,13 @@ public class DetailActivity extends ActionBarActivity {
 
 
             @Override
-            protected void onPostExecute(ArrayList<Reviews> result){
+            protected void onPostExecute(ArrayList<Reviews> result) {
                 if (result != null) {
                     if (result != null) {
                         dAdapter.clear();
                         for (Reviews s : result) {
-                            dAdapter.add(s); }
+                            dAdapter.add(s);
+                        }
                     }
                 }
             }
@@ -331,19 +359,19 @@ public class DetailActivity extends ActionBarActivity {
             private ArrayList<ExtraBase> getTrailersDataFromJson(String jsonStr)
                     throws JSONException {
                 // JSON Node names
-                final String TAG_MOVIE_NUMBER= "id";
+                final String TAG_MOVIE_NUMBER = "id";
                 final String TAG_RESULT = "results";
                 final String TAG_TRAILER_ID = "id";
-                final String TAG_TRAILER_KEY= "key";
-                final String TAG_TRAILER_NAME= "name";
-                final String TAG_TRAILER_SITE= "site";
-                final String TAG_TRAILER_SIZE= "size";
-                final String TAG_TRAILER_TYPE= "type";
+                final String TAG_TRAILER_KEY = "key";
+                final String TAG_TRAILER_NAME = "name";
+                final String TAG_TRAILER_SITE = "site";
+                final String TAG_TRAILER_SIZE = "size";
+                final String TAG_TRAILER_TYPE = "type";
 
 
                 JSONObject trailersDataJson = new JSONObject(jsonStr);
                 //json object movie number know as movie id
-                String movieID= trailersDataJson.getString(TAG_MOVIE_NUMBER);
+                String movieID = trailersDataJson.getString(TAG_MOVIE_NUMBER);
                 //  String movieNumber = movieID.getString(TAG_MOVIE_NUMBER);
 
 
@@ -362,16 +390,16 @@ public class DetailActivity extends ActionBarActivity {
                     String key = c.getString(TAG_TRAILER_KEY);
                     String name = c.getString(TAG_TRAILER_NAME);
                     String site = c.getString(TAG_TRAILER_SITE);
-                    String size= c.getString(TAG_TRAILER_SIZE);
+                    String size = c.getString(TAG_TRAILER_SIZE);
                     String type = c.getString(TAG_TRAILER_TYPE);
 
 //            MovieInfo movieTrailer = new MovieInfo();
 //            movieTrailer.setMovieID(movieID);
 //            movieTrailer.setMovieTrailerKey(key);
-                    ExtraBase movieTrailer = new ExtraBase(movieID, trailerID , key , name , site , size , type);
+                    ExtraBase movieTrailer = new ExtraBase(movieID, trailerID, key, name, site, size, type);
 
 
-                    TrailersList.add(i,movieTrailer);
+                    TrailersList.add(i, movieTrailer);
 
                 }
 
@@ -478,12 +506,13 @@ public class DetailActivity extends ActionBarActivity {
 
             @Override
 //        protected void onPostExecute(String[] result) {
-            protected void onPostExecute(ArrayList<ExtraBase> result){
+            protected void onPostExecute(ArrayList<ExtraBase> result) {
                 if (result != null) {
                     if (result != null) {
                         cAdapter.clear();
                         for (ExtraBase s : result) {
-                            cAdapter.add(s); }
+                            cAdapter.add(s);
+                        }
                     }
                 }
             }

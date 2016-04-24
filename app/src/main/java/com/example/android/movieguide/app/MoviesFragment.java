@@ -18,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.example.android.movieguide.app.data.MoviesDBHelper;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,15 +36,12 @@ import java.util.ArrayList;
 public class MoviesFragment extends Fragment {
 
 
-
-
-//    private  ArrayList<MovieInfo> MovieList = new ArrayList<MovieInfo>();
+    //    private  ArrayList<MovieInfo> MovieList = new ArrayList<MovieInfo>();
 //private  ArrayList<MovieInfo> MovieList;
     private MovieAdapter movieAdapter;
     private MovieInfo movie;
     private GridView gridview;
-
-
+private String sorting;
 
     public MoviesFragment() {
     }
@@ -74,8 +73,6 @@ public class MoviesFragment extends Fragment {
     }
 
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -84,42 +81,56 @@ public class MoviesFragment extends Fragment {
 
 
         gridview = (GridView) rootView.findViewById(R.id.gridview);
-//        posterAdapter = new ImageAdapter(getActivity());
+
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 //                String anyText = (String) movieAdapter.getItem(position);
-//                //String anyText = String.valueOf(posterAdapter.getItem(position));
-//                Toast.makeText(getActivity(), anyText, Toast.LENGTH_SHORT).show();
 //                Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, anyText);
-//                startActivity(intent);
-
-
                 movie = (MovieInfo) movieAdapter.getItem(position);
-                Toast.makeText(getActivity(), movie.getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), movie.getReleaseDate(), Toast.LENGTH_LONG).show();
                 Intent i = new Intent(getActivity(), DetailActivity.class);
                 i.putExtra("com.example.android.movieguide.app.MovieInfo", movie);
+                //   i.putExtra("releaseDate",movie.getReleaseDate());
                 startActivity(i);
-
             }
         });
 
         return rootView;
     }
 
-    private void updateMovies(){
+    private void updateMovies() {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        String sorting = prefs.getString(getString(R.string.pref_sorting_key), getString(R.string.pref_sorting_most_popular));
+
         FetchMoviesTask moviesTask = new FetchMoviesTask();
-//           moviesTask.execute("popular");
-        // new GetContacts().execute();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sorting = prefs.getString(getString(R.string.pref_sorting_key), getString(R.string.pref_sorting_most_popular));
         moviesTask.execute(sorting);
+
     }
 
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        updateMovies();
+//    }
+
     @Override
-    public void onStart() {
-        super.onStart();
-        updateMovies();
+    public void onResume() {
+        super.onResume();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+         sorting = prefs.getString(getString(R.string.pref_sorting_key), getString(R.string.pref_sorting_most_popular));
+        if (sorting.equals("favorites")) {
+            ArrayList<MovieInfo> favorites = new ArrayList<>();
+            MoviesDBHelper helper = new MoviesDBHelper(getActivity());
+            helper.getReadableDatabase();
+            favorites = (ArrayList<MovieInfo>) helper.getFAVORITEMOVIES();
+            MovieAdapter favoriteAdapter = new MovieAdapter(getActivity(), favorites);
+            gridview.setAdapter(favoriteAdapter);
+        }
+        else updateMovies();
+
+
     }
 
     public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<MovieInfo>> {
@@ -136,12 +147,12 @@ public class MoviesFragment extends Fragment {
             final String TAG_GENRE_IDS = "genre_ids";
             final String TAG_ID = "id";
             final String TAG_ORIGINAL_TITLE = "original_title";
-            final String TAG_ORIGINAL_LANGUAGE ="original_language";
+            final String TAG_ORIGINAL_LANGUAGE = "original_language";
             final String TAG_TITLE = "title";
             final String TAG_BACKDROP_PATH = "backdrop_path";
             final String TAG_POPULARITY = "popularity";
             final String TAG_VOTE_COUNT = "vote_count";
-            final String TAG_VIDEO= "video";
+            final String TAG_VIDEO = "video";
             final String TAG_VOTE_AVERAGE = "vote_average";
 
 
@@ -150,7 +161,7 @@ public class MoviesFragment extends Fragment {
 
             // ArrayList<String> resultMovie = new ArrayList<String>();
             //ArrayList<MovieInfo> resultMovie = new ArrayList<MovieInfo>();
-           ArrayList<MovieInfo> MovieList = new ArrayList<MovieInfo>();
+            ArrayList<MovieInfo> MovieList = new ArrayList<MovieInfo>();
 
             //MovieList = new ArrayList<>();
             for (int i = 0; i < movies.length(); i++) {
@@ -171,16 +182,16 @@ public class MoviesFragment extends Fragment {
                 //boolean video = c.getBoolean(TAG_VIDEO);
                 double voteCount = c.getDouble(TAG_VOTE_COUNT);
 
-                MovieInfo movieDetails = new MovieInfo(id ,title, overview, poster, backDrop, releaseDate, voteAverage, popularity, language, voteCount);
-                MovieList.add(i,movieDetails);
+                MovieInfo movieDetails = new MovieInfo(id, title, overview, poster, backDrop, releaseDate, voteAverage, popularity, language, voteCount);
+                MovieList.add(i, movieDetails);
 
             }
 
 
             //for (MovieInfo s : MovieList) {
-               // Log.v(LOG_TAG, "Movies entry: " + s);
+            // Log.v(LOG_TAG, "Movies entry: " + s);
 
-           // }
+            // }
 
             return MovieList;
 
@@ -253,7 +264,7 @@ public class MoviesFragment extends Fragment {
                     return null;
                 }
                 moviesJsonStr = buffer.toString();
-               // Log.v(LOG_TAG, "Movies JSON String: " + moviesJsonStr);
+                // Log.v(LOG_TAG, "Movies JSON String: " + moviesJsonStr);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -284,7 +295,7 @@ public class MoviesFragment extends Fragment {
 
         @Override
 //        protected void onPostExecute(String[] result) {
-        protected void onPostExecute(ArrayList<MovieInfo> result){
+        protected void onPostExecute(ArrayList<MovieInfo> result) {
             if (result != null) {
 
                 movieAdapter = new MovieAdapter(getActivity(), result);

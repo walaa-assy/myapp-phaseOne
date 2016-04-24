@@ -48,8 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:numStars="5"
-        android:rating="2.5"
-        android:stepSize="0.5"
+
         android:layout_below="@id/title_text_view"
         android:layout_toRightOf="@id/poster_image_view"
         android:layout_marginLeft="32dp"
@@ -79,7 +78,21 @@
         android:layout_marginRight="32dp"
         android:layout_marginTop="32dp"/>
 
-<LinearLayout
+    <Button
+        android:id="@+id/fav_button"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:background="@drawable/stop"
+        android:scaleType="centerCrop"
+        android:layout_below="@id/overview_text_view"
+        android:layout_toRightOf="@id/poster_image_view"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="32dp"
+        android:text="Mark as Favorite"
+        android:textColor="#FFFFFF" />
+
+
+    <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_below="@id/poster_image_view"
