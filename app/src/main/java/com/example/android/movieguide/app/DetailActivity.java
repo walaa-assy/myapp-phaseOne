@@ -16,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -122,7 +121,7 @@ public class DetailActivity extends ActionBarActivity {
             String rd = m.getReleaseDate();
             //String rd = i.getStringExtra("releaseDate");
             //Toast.makeText(getActivity(), "rd = " + rd, Toast.LENGTH_LONG).show();
-            float vote = (float) m.getVoteAverage();
+
             double popularity = m.getPopularity();
 
             ImageView backDrop = (ImageView) rootView.findViewById(R.id.backdrop_image_view);
@@ -137,10 +136,7 @@ public class DetailActivity extends ActionBarActivity {
             TextView rdText = (TextView) rootView.findViewById(R.id.releaseDate_text_view);
             rdText.setText(rd);
 
-            RatingBar voteRatingBar = (RatingBar) rootView.findViewById(R.id.rating_bar);
-            voteRatingBar.setStepSize((float) 0.5);
-            float fVote = vote / 2;
-           voteRatingBar.setRating(vote);
+
 
             //((TextView) rootView.findViewById(R.id.releaseDate_text_view)).setText(rd);
 //            ((TextView) rootView.findViewById(R.id.voteAverage_text_View)).setText(String.valueOf(vote));
