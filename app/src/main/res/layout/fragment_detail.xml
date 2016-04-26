@@ -57,9 +57,10 @@
     <TextView
         android:id="@+id/releaseDate_text_view"
         android:layout_width="30dp"
-        android:layout_height="10dp"
-        android:textColor="@android:color/black"
-        android:background="#8BC34A"
+        android:layout_height="30dp"
+        android:gravity="end"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textStyle="italic"
         android:layout_below="@id/title_text_view"
         android:layout_toRightOf="@id/rating_bar"
         android:layout_alignParentRight="true"

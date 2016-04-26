@@ -43,6 +43,8 @@ public class MoviesFragment extends Fragment {
     private GridView gridview;
 private String sorting;
 
+    Callback comm;
+
     public MoviesFragment() {
     }
 
@@ -88,7 +90,7 @@ private String sorting;
 //                String anyText = (String) movieAdapter.getItem(position);
 //                Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, anyText);
                 movie = (MovieInfo) movieAdapter.getItem(position);
-                Toast.makeText(getActivity(), movie.getReleaseDate(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), movie.getTitle(), Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(getActivity(), DetailActivity.class);
                 i.putExtra("com.example.android.movieguide.app.MovieInfo", movie);
                 //   i.putExtra("releaseDate",movie.getReleaseDate());
@@ -97,6 +99,12 @@ private String sorting;
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        comm = (Callback) getActivity();
     }
 
     private void updateMovies() {
@@ -132,6 +140,8 @@ private String sorting;
 
 
     }
+
+
 
     public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<MovieInfo>> {
 

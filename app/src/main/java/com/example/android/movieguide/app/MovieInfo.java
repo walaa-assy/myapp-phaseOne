@@ -87,7 +87,7 @@ public void setMoviePoster(String poster) {this.moviePoster =  BASE_IMAGE_URL + 
         return BASE_IMAGE_URL + POSTER_SIZE + moviePoster;
     }
 
-    public void setMovieBackdrop(String backdrop) {this.moviePoster =  BASE_IMAGE_URL + POSTER_SIZE + backdrop ; }
+    public void setMovieBackdrop(String backdrop) {this.moviePoster =  BASE_IMAGE_URL + BACKDROP_SIZE + backdrop ; }
     public String getBackdropPath() {
         return BASE_IMAGE_URL + BACKDROP_SIZE + movieBackdrop;
     }
@@ -152,11 +152,12 @@ public void setMoviePoster(String poster) {this.moviePoster =  BASE_IMAGE_URL + 
         dest.writeString(movieOverview);
         dest.writeString(moviePoster);
         dest.writeString(movieBackdrop);
+        dest.writeString(movieReleaseDate);
         dest.writeDouble(movieVoteAverage);
         dest.writeDouble(moviePopularity);
+        dest.writeDouble(movieVoteCount);
         dest.writeString(movieLanguage);
         dest.writeString(String.valueOf(movieVideo));
-        dest.writeString(movieReleaseDate);
         dest.writeString(movieTrailerKey);
         dest.writeString(movieReviewURL);
     }
@@ -183,6 +184,7 @@ public void setMoviePoster(String poster) {this.moviePoster =  BASE_IMAGE_URL + 
         this.movieReleaseDate = in.readString();
         this.movieVoteAverage = in.readDouble();
         this.moviePopularity = in.readDouble();
+        this.movieVoteCount = in.readDouble();
         this.movieLanguage = in.readString();
         this.movieVideo = Boolean.parseBoolean(in.readString());
         this.movieTrailerKey = in.readString();

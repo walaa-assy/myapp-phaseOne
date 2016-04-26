@@ -7,7 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements Callback{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,5 +42,10 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void respond(MovieInfo mov) {
+
     }
 }
