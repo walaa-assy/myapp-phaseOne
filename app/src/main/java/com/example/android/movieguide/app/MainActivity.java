@@ -9,10 +9,29 @@ import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity implements Callback{
 
+    private static final String DETAILFRAGMENT_TAG = "DFTAG";
+    boolean mTwoPane;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (findViewById(R.id.container) != null) {
+
+            mTwoPane = true;
+
+
+        }
+            else
+            {mTwoPane = false;}
+        if (savedInstanceState == null){
+            MoviesFragment mFragment = new MoviesFragment();
+            mFragment.setListener(this);
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment, mFragment).commit();
+
+        }
+
     }
 
 
@@ -47,5 +66,26 @@ public class MainActivity extends ActionBarActivity implements Callback{
     @Override
     public void respond(MovieInfo mov) {
 
+        if (mTwoPane) {
+
+
+            Bundle args= new Bundle();
+            args.putParcelable("MovieInfo", mov);
+            DetailFragment dFragment= new DetailFragment();
+            dFragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction().replace(R.id.container,dFragment).commit();
+
+        } else {
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.putExtra("MovieInfo", mov);
+            startActivity(intent);
+        }
     }
 }
+
+
+//DetailFragment dfragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+//dfragment.getData(mov);
+//        Intent i = this.getIntent();
+//        mov = (MovieInfo) i.getParcelableExtra("com.example.android.movieguide.app.MovieInfo");
+////startActivity(i);

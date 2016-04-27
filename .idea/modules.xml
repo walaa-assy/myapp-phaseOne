@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MovieGuide-p2-afterWorkshop.iml" filepath="$PROJECT_DIR$/MovieGuide-p2-afterWorkshop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MovieGuide_after_2pane.iml" filepath="$PROJECT_DIR$/MovieGuide_after_2pane.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

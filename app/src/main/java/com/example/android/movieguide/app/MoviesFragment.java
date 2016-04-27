@@ -1,6 +1,5 @@
 package com.example.android.movieguide.app;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -89,23 +88,29 @@ private String sorting;
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 //                String anyText = (String) movieAdapter.getItem(position);
 //                Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, anyText);
+                //   i.putExtra("releaseDate",movie.getReleaseDate());
                 movie = (MovieInfo) movieAdapter.getItem(position);
                 Toast.makeText(getActivity(), movie.getTitle(), Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(getActivity(), DetailActivity.class);
-                i.putExtra("com.example.android.movieguide.app.MovieInfo", movie);
-                //   i.putExtra("releaseDate",movie.getReleaseDate());
-                startActivity(i);
+//                Intent i = new Intent(getActivity(), DetailActivity.class);
+//                i.putExtra("MovieInfo", movie);
+//                startActivity(i);
+                comm.respond(movie);
             }
         });
 
         return rootView;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        comm = (Callback) getActivity();
+
+    public void setListener(Callback listener) {
+       comm = listener;
     }
+
+//    @Override
+//    public void onActivityCreated(Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        comm = (Callback) getActivity();
+//    }
 
     private void updateMovies() {
 //        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
