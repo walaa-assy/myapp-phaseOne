@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/header_view">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="0dp"
+        android:clipChildren="false"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <ImageView
+            android:id="@+id/backdrop_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"/>
+
+
+        <ImageView
+            android:id="@+id/poster_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/backdrop_image_view"
+            android:layout_marginTop="32dp"
+            android:layout_marginLeft="32dp"
+            android:scaleType="centerCrop"/>
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="#4689C8"
+            android:textStyle="bold"
+            android:layout_below="@id/backdrop_image_view"
+            android:layout_toRightOf="@id/poster_image_view"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="32dp" />
+
+        <RatingBar
+            android:id="@+id/rating_bar"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+
+            android:layout_below="@id/title_text_view"
+            android:layout_toRightOf="@id/poster_image_view"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="20dp"/>
+
+        <TextView
+            android:id="@+id/releaseDate_text_view"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:gravity="end"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textStyle="italic"
+            android:layout_below="@id/title_text_view"
+            android:layout_toRightOf="@id/rating_bar"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="75dp"
+            android:layout_marginRight="32dp"
+            android:layout_marginTop="20dp" />
+
+        <TextView
+            android:id="@+id/overview_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_below="@id/rating_bar"
+            android:layout_toRightOf="@id/poster_image_view"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            android:layout_marginTop="32dp"/>
+
+        <Button
+            android:id="@+id/fav_button"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:background="@drawable/stop"
+            android:scaleType="centerCrop"
+            android:layout_below="@id/overview_text_view"
+            android:layout_toRightOf="@id/poster_image_view"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="32dp"
+            android:text="Mark as Favorite"
+            android:textColor="#FFFFFF" />
+    </RelativeLayout>
+
+</LinearLayout>
