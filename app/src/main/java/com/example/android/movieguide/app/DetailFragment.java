@@ -53,7 +53,7 @@ public  class DetailFragment extends Fragment {
     private static final String SHARE_HASHTAG = " #MovieguideApp";
     private String shareStr;
     ExtraBase base;
-
+    ArrayList<ExtraBase> t = new ArrayList<>();
 String baseTrailer;
 
 
@@ -104,34 +104,13 @@ String baseTrailer;
                 (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
 
         if (mShareActionProvider != null ) {
-            mShareActionProvider.setShareIntent(createShareForecastIntent());
+            mShareActionProvider.setShareIntent(createShareTrailerIntent());
         } else {
             Log.d(LOG_TAG, "Share Action Provider is null?");
         }
     }
 
-    private Intent createShareForecastIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-//            shareIntent.setType("video/*");
-////
-////            Uri uri = Uri.parse(v.getKey());
-//            shareIntent.putExtra(Intent.EXTRA_STREAM,  Uri.parse("https://www.youtube.com/watch?v=nIGtF3J5kn8"));
-//            shareIntent.putExtra(Intent.EXTRA_TEXT, shareStr + SHARE_HASHTAG);
-        shareIntent.setType("text/plain");
-        //shareStr = base.getKey();
-        shareStr = m.getTitle();
-//        ExtraBase b = cAdapter.getItem(mActivatedPosition);
-//        Uri uri = Uri.parse(b.getKey());
-//        shareIntent.putExtra(Intent.EXTRA_STREAM,  uri);
-//        for (int i = 0; i < trailers.size(); i++)
-//        {
-//            shareStr= baseT.getKey();
-//        }
-       // ExtraBase v = cAdapter.getItem(position);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, shareStr  + SHARE_HASHTAG);
-        return shareIntent;
-    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -185,7 +164,10 @@ String baseTrailer;
         FetchReviewsTask reviewsTask = new FetchReviewsTask();
         reviewsTask.execute(number);
 
-        ArrayList<ExtraBase> t = new ArrayList<>();
+        //ArrayList<ExtraBase> t = new ArrayList<>();
+
+        //Toast.makeText(getActivity(), "rd = " + turl , Toast.LENGTH_LONG).show();
+
         ListView tList = (ListView) rootView.findViewById(R.id.trailers_listview);
         cAdapter = new CommonAdapter(getActivity(), t);
         tList.setAdapter(cAdapter);
@@ -222,7 +204,26 @@ String baseTrailer;
         super.onSaveInstanceState(outState);
     }
 
+    private Intent createShareTrailerIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 
+       shareIntent.setType("text/plain");
+        //shareIntent.setType("image/*");
+        shareStr = base.getKey();
+       // shareStr = m.getTitle();
+        ExtraBase firstTrailer =new ExtraBase();
+        //ExtraBase firstTrailer = base;
+        for (int i = 0; i < t.size(); i++) {
+            firstTrailer = t.get(0);
+        }
+
+        String tURL= firstTrailer.getKey();
+       // shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+String trailerUrl = m.getTrailerURL();
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareStr + " \n" +" TRAILER" +" \n"+ trailerUrl + " \n" + SHARE_HASHTAG);
+        return shareIntent;
+    }
 
     public class FetchReviewsTask extends AsyncTask<String, Void, ArrayList<Reviews>> {
 
@@ -432,6 +433,7 @@ String baseTrailer;
 //            MovieInfo movieTrailer = new MovieInfo();
 //            movieTrailer.setMovieID(movieID);
 //            movieTrailer.setMovieTrailerKey(key);
+                m.setTRailerUrl(key);
                 ExtraBase movieTrailer = new ExtraBase(movieID, trailerID, key, name, site, size, type);
 
 

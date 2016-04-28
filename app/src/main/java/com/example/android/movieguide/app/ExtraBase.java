@@ -16,6 +16,9 @@ public class ExtraBase {
 
      final String BASE_TRAILER_URL = "https://www.youtube.com/watch?v=";
 
+    public ExtraBase()
+    {}
+
     public  ExtraBase(String movieNumber, String tagID,String key, String name, String site, String size, String type ){
         this.movieNumber = movieNumber;
         this.tagID = tagID;

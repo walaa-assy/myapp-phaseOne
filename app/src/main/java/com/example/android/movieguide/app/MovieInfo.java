@@ -52,9 +52,7 @@ public class MovieInfo implements Parcelable {
 
 
 
-    public void setMovieTrailerKey(String key) {
-        this.movieTrailerKey = key;
-    }
+
 
     public void setMovieReviewURL(String url) {
         this.movieReviewURL = url;
@@ -122,6 +120,7 @@ public void setMoviePoster(String poster) {this.moviePoster =  BASE_IMAGE_URL + 
         return movieVoteCount;
     }
 
+    public void setTRailerUrl(String key) {this.movieTrailerKey = key;}
     public String getTrailerURL() {
         return BASE_TARILER_URL + movieTrailerKey;
     }
