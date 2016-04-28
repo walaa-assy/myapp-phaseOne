@@ -1,8 +1,12 @@
 package com.example.android.movieguide.app;
 
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -40,9 +44,14 @@ public class MoviesFragment extends Fragment {
     private MovieAdapter movieAdapter;
     private MovieInfo movie;
     private GridView gridview;
-private String sorting;
+    private String sorting;
+
+
 
     Callback comm;
+
+    private static final String STATE_ACTIVATED_POSITION = "activated_position";
+    private int mActivatedPosition = GridView.INVALID_POSITION;
 
     public MoviesFragment() {
     }
@@ -86,24 +95,79 @@ private String sorting;
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//                String anyText = (String) movieAdapter.getItem(position);
-//                Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, anyText);
-                //   i.putExtra("releaseDate",movie.getReleaseDate());
                 movie = (MovieInfo) movieAdapter.getItem(position);
                 Toast.makeText(getActivity(), movie.getTitle(), Toast.LENGTH_SHORT).show();
 //                Intent i = new Intent(getActivity(), DetailActivity.class);
 //                i.putExtra("MovieInfo", movie);
 //                startActivity(i);
                 comm.respond(movie);
+                mActivatedPosition = position;
+
             }
         });
+//        ListAdapter adapter = gridview.getAdapter();
+//        gridview.performItemClick(gridview.getChildAt(0), 0, adapter.getItemId(0));
+        //gridview.performItemClick(gridview.getChildAt(mPosition), mPosition,gridview.getAdapter().getItemId(mPosition));
+
+        //if (isTablet(getActivity()))
+            //gridview.performItemClick(gridview.getChildAt(0), 0,movieAdapter.getItemId(0));
+
+
+        if (savedInstanceState != null
+                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
+            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
+        }
+
 
         return rootView;
     }
 
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
 
     public void setListener(Callback listener) {
-       comm = listener;
+        comm = listener;
+    }
+
+
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        if (mPosition != GridView.INVALID_POSITION) {
+//            outState.putInt(SELECTED_KEY, mPosition);
+//        }
+//        super.onSaveInstanceState(outState);
+//    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mActivatedPosition != GridView.INVALID_POSITION) {
+            // Serialize and persist the activated item position.
+            outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public void setActivateOnItemClick(boolean activateOnItemClick) {
+        // When setting CHOICE_MODE_SINGLE, ListView will automatically
+        // give items the 'activated' state when touched.
+        gridview.setChoiceMode(activateOnItemClick
+                ? GridView.CHOICE_MODE_SINGLE
+                : GridView.CHOICE_MODE_NONE);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void setActivatedPosition(int position) {
+        if (position == GridView.INVALID_POSITION) {
+            gridview.setItemChecked(mActivatedPosition, false);
+        } else {
+            gridview.setItemChecked(position, true);
+        }
+
+        mActivatedPosition = position;
     }
 
 //    @Override
@@ -124,15 +188,17 @@ private String sorting;
 //    @Override
 //    public void onStart() {
 //        super.onStart();
-//        updateMovies();
+//         updateMovies();
 //    }
+
+
 
     @Override
     public void onResume() {
         super.onResume();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-         sorting = prefs.getString(getString(R.string.pref_sorting_key), getString(R.string.pref_sorting_most_popular));
+        sorting = prefs.getString(getString(R.string.pref_sorting_key), getString(R.string.pref_sorting_most_popular));
         if (sorting.equals("favorites")) {
             ArrayList<MovieInfo> favorites = new ArrayList<>();
             MoviesDBHelper helper = new MoviesDBHelper(getActivity());
@@ -140,12 +206,10 @@ private String sorting;
             favorites = (ArrayList<MovieInfo>) helper.getFAVORITEMOVIES();
             MovieAdapter favoriteAdapter = new MovieAdapter(getActivity(), favorites);
             gridview.setAdapter(favoriteAdapter);
-        }
-        else updateMovies();
+        } else updateMovies();
 
 
     }
-
 
 
     public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<MovieInfo>> {
@@ -315,11 +379,14 @@ private String sorting;
 
                 movieAdapter = new MovieAdapter(getActivity(), result);
                 gridview.setAdapter(movieAdapter);
+              //  gridview.performItemClick(gridview.getChildAt(mActivatedPosition), 0,movieAdapter.getItemId(mActivatedPosition));
+                if (mActivatedPosition != GridView.INVALID_POSITION) {
+                    gridview.setSelection(mActivatedPosition);
+                    gridview.smoothScrollToPosition(mActivatedPosition);
+                }
+               // gridview.performItemClick(gridview.getChildAt(mPosition), 0, movieAdapter.getItemId(mPosition));
+               // gridview.performItemClick(gridview.getChildAt(0), 0, movieAdapter.getItemId(0));
 
-                //posterAdapter.clear();
-//                for (String newMoviesStr : result) {
-//                    posterAdapter.add(newMoviesStr);
-//                }
             }
         }
     }

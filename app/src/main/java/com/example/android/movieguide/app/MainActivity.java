@@ -20,17 +20,20 @@ public class MainActivity extends ActionBarActivity implements Callback{
         if (findViewById(R.id.container) != null) {
 
             mTwoPane = true;
-
-
         }
             else
-            {mTwoPane = false;}
+            { mTwoPane = false; }
+
         if (savedInstanceState == null){
             MoviesFragment mFragment = new MoviesFragment();
             mFragment.setListener(this);
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment, mFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment, mFragment).commit();
 
         }
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.capperboard);
+
 
     }
 
