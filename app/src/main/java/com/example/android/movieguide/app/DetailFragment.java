@@ -56,7 +56,7 @@ public  class DetailFragment extends Fragment {
     ArrayList<ExtraBase> t = new ArrayList<>();
    ArrayList<ExtraBase> TrailersList;
 String baseTrailer;
-
+boolean btnFavState = false;
 
 
     public DetailFragment() {
@@ -73,20 +73,7 @@ String baseTrailer;
 
     }
 
-    public MovieInfo getData(MovieInfo mov){
 
-        mov.setMovieID(m.getMovieId());
-        mov.setMovieTitle(m.getTitle());
-        mov.setMoviePoster(m.getPosterPath());
-        mov.setMovieBackdrop(m.getBackdropPath());
-        mov.setDetailPoster(m.getDetailPoster());
-        mov.setMovieOverview(m.getOverview());
-        mov.setMovieReleaseDate(m.getReleaseDate());
-        mov.setMovieVoteAverage(m.getVoteAverage());
-        mov.setMoviePopularity(m.getPopularity());
-        m.setMovieVoteCount(m.getVoteCount());
-        return mov;
-    }
 
     public void insertFavoriteMovies() {
 
@@ -156,7 +143,7 @@ String baseTrailer;
         RatingBar voteRatingBar = (RatingBar) rootView.findViewById(R.id.rating_bar);
         voteRatingBar.setStepSize((float) 0.5);
         float fVote = vote / 2;
-        voteRatingBar.setRating(vote);
+        voteRatingBar.setRating(fVote);
 
 
         FetchTrailersTask trailerTask = new FetchTrailersTask();
@@ -167,7 +154,7 @@ String baseTrailer;
 
         //ArrayList<ExtraBase> t = new ArrayList<>();
 
-        //Toast.makeText(getActivity(), "rd = " + turl , Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "rd = " + vote , Toast.LENGTH_LONG).show();
 
         ListView tListView = (ListView) rootView.findViewById(R.id.trailers_listview);
        cAdapter = new CommonAdapter(getActivity(), t);
@@ -179,7 +166,8 @@ String baseTrailer;
                 base = cAdapter.getItem(position);
                 Uri uri = Uri.parse(base.getKey());
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null)
+                    startActivity(intent);
             }
         });
 
@@ -189,15 +177,16 @@ String baseTrailer;
         rListView.setAdapter(dAdapter);
 
         final Button addFAV = (Button) rootView.findViewById(R.id.fav_button);
-        addFAV.setOnClickListener(new View.OnClickListener() {
+            addFAV.setText("Mark as Favorite");
+            addFAV.setBackgroundResource(R.drawable.stop);
+
+              addFAV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 insertFavoriteMovies();
-                //addFAV.setBackground(movies);
+               btnFavState = true;
                 addFAV.setText("already a favorite");
                 addFAV.setBackgroundResource(R.drawable.dontstop);
-
-
             }
         });
 
@@ -216,7 +205,7 @@ String baseTrailer;
 
        shareIntent.setType("text/plain");
         //shareIntent.setType("image/*");
-        //shareStr = base.getKey();
+
        shareStr = m.getTitle();
      ExtraBase firstTrailer =new ExtraBase();
 //        //ExtraBase firstTrailer = base;
@@ -224,8 +213,7 @@ String baseTrailer;
             firstTrailer = t.get(0);
         }
      String tURL= firstTrailer.getKey();
-//       // shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-//String tURl = m.getTrailerURL();
+
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareStr + " \n" +" TRAILER" +" \n" + tURL+" \n" + SHARE_HASHTAG);
         return shareIntent;
     }
