@@ -133,13 +133,7 @@ public class MoviesFragment extends Fragment {
     }
 
 
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        if (mPosition != GridView.INVALID_POSITION) {
-//            outState.putInt(SELECTED_KEY, mPosition);
-//        }
-//        super.onSaveInstanceState(outState);
-//    }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

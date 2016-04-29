@@ -43,10 +43,10 @@ public  class DetailFragment extends Fragment {
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
     private int mActivatedPosition = ListView.INVALID_POSITION;
     MovieInfo m;
-    private DetailsAdapter dAdapter;
+    //private DetailsAdapter dAdapter;
     private ArrayList<Reviews> rev = new ArrayList<>();
     private ListView rListView;
-    public static final String MOVIE_BUNDLE = "Movie_Bundle";
+    public static final String MOVIE_BUNDLE = "MovieInfo";
 
     private CommonAdapter cAdapter;
 
@@ -107,12 +107,12 @@ boolean btnFavState = false;
 
         Bundle arguments = getArguments();
         if (arguments != null) {
-            m = arguments.getParcelable("MovieInfo");
+            m = arguments.getParcelable(MOVIE_BUNDLE);
         }
 
         else {
             Intent i = getActivity().getIntent();
-            m = (MovieInfo) i.getParcelableExtra("MovieInfo");
+            m = (MovieInfo) i.getParcelableExtra(MOVIE_BUNDLE);
         }
 
         String number = m.getMovieId();
@@ -146,6 +146,7 @@ boolean btnFavState = false;
         voteRatingBar.setRating(fVote);
 
 
+
         FetchTrailersTask trailerTask = new FetchTrailersTask();
         trailerTask.execute(number);
 
@@ -177,8 +178,9 @@ boolean btnFavState = false;
 //        rListView.setAdapter(dAdapter);
 
         final Button addFAV = (Button) rootView.findViewById(R.id.fav_button);
-            addFAV.setText("Mark as Favorite");
-            addFAV.setBackgroundResource(R.drawable.stop);
+        if (btnFavState==true)
+        { addFAV.setText("already a favorite");
+            addFAV.setBackgroundResource(R.drawable.orange);}
 
               addFAV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,6 +191,16 @@ boolean btnFavState = false;
                 addFAV.setBackgroundResource(R.drawable.orange);
             }
         });
+
+        final Button btnReviews = (Button) rootView.findViewById(R.id.reviews_button);
+btnReviews.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        Intent i = new Intent(getActivity(), ReviewsActivity.class);
+                i.putExtra(MOVIE_BUNDLE, m);
+                startActivity(i);
+    }
+});
 
         return rootView;
     }

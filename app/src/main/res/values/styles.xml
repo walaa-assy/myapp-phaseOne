@@ -9,7 +9,8 @@
         <item name="displayOptions">useLogo|showHome</item>
     </style>
 
-
+    <style name="Dialog" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+    </style>
 
     <!-- Style for forecast listview -->
     <style name="ListStyle">

@@ -78,6 +78,8 @@
             android:layout_toRightOf="@id/poster_image_view"
             android:layout_marginTop="15dp"
             android:layout_marginLeft="32dp"
+            android:background="@drawable/stop"
+            android:text="Mark as Favorite"
             android:textColor="#FFFFFF" />
         <Button
             android:id="@+id/reviews_button"
@@ -101,7 +103,7 @@
 
             android:layout_marginLeft="22dp"
             android:layout_marginRight="22dp"
-            android:layout_marginTop="15dp"/>
+            android:layout_marginTop="25dp"/>
 
 
 
