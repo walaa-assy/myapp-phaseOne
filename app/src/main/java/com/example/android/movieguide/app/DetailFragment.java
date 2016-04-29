@@ -149,12 +149,12 @@ boolean btnFavState = false;
         FetchTrailersTask trailerTask = new FetchTrailersTask();
         trailerTask.execute(number);
 
-        FetchReviewsTask reviewsTask = new FetchReviewsTask();
-        reviewsTask.execute(number);
+//        FetchReviewsTask reviewsTask = new FetchReviewsTask();
+//        reviewsTask.execute(number);
 
         //ArrayList<ExtraBase> t = new ArrayList<>();
 
-        Toast.makeText(getActivity(), "rd = " + vote , Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "vote average = " + vote , Toast.LENGTH_LONG).show();
 
         ListView tListView = (ListView) rootView.findViewById(R.id.trailers_listview);
        cAdapter = new CommonAdapter(getActivity(), t);
@@ -172,9 +172,9 @@ boolean btnFavState = false;
         });
 
 
-        rListView = (ListView) rootView.findViewById(R.id.reviews_listview);
-        dAdapter = new DetailsAdapter(getActivity(), rev);
-        rListView.setAdapter(dAdapter);
+//        rListView = (ListView) rootView.findViewById(R.id.reviews_listview);
+//        dAdapter = new DetailsAdapter(getActivity(), rev);
+//        rListView.setAdapter(dAdapter);
 
         final Button addFAV = (Button) rootView.findViewById(R.id.fav_button);
             addFAV.setText("Mark as Favorite");
@@ -186,7 +186,7 @@ boolean btnFavState = false;
                 insertFavoriteMovies();
                btnFavState = true;
                 addFAV.setText("already a favorite");
-                addFAV.setBackgroundResource(R.drawable.dontstop);
+                addFAV.setBackgroundResource(R.drawable.orange);
             }
         });
 
@@ -218,167 +218,167 @@ boolean btnFavState = false;
         return shareIntent;
     }
 
-    public class FetchReviewsTask extends AsyncTask<String, Void, ArrayList<Reviews>> {
-
-        private final String LOG_TAG = FetchReviewsTask.class.getSimpleName();
-
-
-        private ArrayList<Reviews> getReviewsDataFromJson(String jsonStr)
-                throws JSONException {
-            // JSON Node names
-            final String TAG_MOVIE_NUMBER = "id";
-            final String TAG_RESULT = "results";
-            final String TAG_REVIEW_ID = "id";
-            final String TAG_REVIEW_AUTHOR = "author";
-            final String TAG_REVIEW_CONTENT = "content";
-            final String TAG_REVIEW_URL = "url";
-
-
-            JSONObject reviewsDataJson = new JSONObject(jsonStr);
-            //json object movie number know as movie id
-            //JSONObject movieID= reviewsDataJson.getJSONObject(TAG_MOVIE_NUMBER);
-            String movieNumber = reviewsDataJson.getString(TAG_MOVIE_NUMBER);
-
-
-            //json array results
-            JSONArray trailers = reviewsDataJson.getJSONArray(TAG_RESULT);
-
-
-            // ArrayList<MovieInfo> ReviewsList = new ArrayList<MovieInfo>();
-
-            ArrayList<Reviews> ReviewsList = new ArrayList<>();
-
-            for (int i = 0; i < trailers.length(); i++) {
-
-                // JSON Node names
-                JSONObject c = trailers.getJSONObject(i);
-                String reviewID = c.getString(TAG_REVIEW_ID);
-                String author = c.getString(TAG_REVIEW_AUTHOR);
-                String content = c.getString(TAG_REVIEW_CONTENT);
-                String url = c.getString(TAG_REVIEW_URL);
-
-//                    MovieInfo movieReview = new MovieInfo();
-//                    movieReview.setMovieID(movieNumber);
-//                    movieReview.setMovieReviewURL(url);
-
-                Reviews movieReview = new Reviews(movieNumber, reviewID, author, content, url);
-
-                ReviewsList.add(i, movieReview);
-
-            }
-
-
-            for (Reviews s : ReviewsList) {
-                Log.v(LOG_TAG, "Reviews entry: " + s);
-
-            }
-
-            return ReviewsList;
-
-        }
-
-        @Override
-        protected ArrayList<Reviews> doInBackground(String... params) {
-
-            if (params.length == 0) {
-                return null;
-            }
-
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            // Will contain the raw JSON response as a string.
-            String moviesJsonStr = null;
-//                String number = "209112";
-//                String mode = "reviews";
-
-            try {
-
-
-                // Construct the URL for the moviedb query
-                //http://api.themoviedb.org/3/movie/209112/reviews?api_key=00000000000000000000000
-
-
-                final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/movie";
-
-                final String APPID_PARAM = "api_key";
-                Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
-                        .appendPath(params[0])
-                        .appendPath("reviews")
-                        .appendQueryParameter(APPID_PARAM, BuildConfig.TheMovieDB_API_KEY)
-                        .build();
-
-                URL url = new URL(builtUri.toString());
-                Log.v(LOG_TAG, "http://api.themoviedb.org/3/movie/209112/videos?api_key=dee364a81187df2c66fa2851bb30b111");
-                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
-
-                // Create the request to OpenWeatherMap, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = reader.readLine()) != null) {
-
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                moviesJsonStr = buffer.toString();
-                // Log.v(LOG_TAG, "Movies JSON String: " + moviesJsonStr);
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-            try {
-                return getReviewsDataFromJson(moviesJsonStr);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-
-        @Override
-        protected void onPostExecute(ArrayList<Reviews> result) {
-            if (result != null) {
-                if (result != null) {
-                    dAdapter.clear();
-                    for (Reviews s : result) {
-                        dAdapter.add(s);
-                    }
-                }
-            }
-        }
-
-
-    }
+//    public class FetchReviewsTask extends AsyncTask<String, Void, ArrayList<Reviews>> {
+//
+//        private final String LOG_TAG = FetchReviewsTask.class.getSimpleName();
+//
+//
+//        private ArrayList<Reviews> getReviewsDataFromJson(String jsonStr)
+//                throws JSONException {
+//            // JSON Node names
+//            final String TAG_MOVIE_NUMBER = "id";
+//            final String TAG_RESULT = "results";
+//            final String TAG_REVIEW_ID = "id";
+//            final String TAG_REVIEW_AUTHOR = "author";
+//            final String TAG_REVIEW_CONTENT = "content";
+//            final String TAG_REVIEW_URL = "url";
+//
+//
+//            JSONObject reviewsDataJson = new JSONObject(jsonStr);
+//            //json object movie number know as movie id
+//            //JSONObject movieID= reviewsDataJson.getJSONObject(TAG_MOVIE_NUMBER);
+//            String movieNumber = reviewsDataJson.getString(TAG_MOVIE_NUMBER);
+//
+//
+//            //json array results
+//            JSONArray trailers = reviewsDataJson.getJSONArray(TAG_RESULT);
+//
+//
+//            // ArrayList<MovieInfo> ReviewsList = new ArrayList<MovieInfo>();
+//
+//            ArrayList<Reviews> ReviewsList = new ArrayList<>();
+//
+//            for (int i = 0; i < trailers.length(); i++) {
+//
+//                // JSON Node names
+//                JSONObject c = trailers.getJSONObject(i);
+//                String reviewID = c.getString(TAG_REVIEW_ID);
+//                String author = c.getString(TAG_REVIEW_AUTHOR);
+//                String content = c.getString(TAG_REVIEW_CONTENT);
+//                String url = c.getString(TAG_REVIEW_URL);
+//
+////                    MovieInfo movieReview = new MovieInfo();
+////                    movieReview.setMovieID(movieNumber);
+////                    movieReview.setMovieReviewURL(url);
+//
+//                Reviews movieReview = new Reviews(movieNumber, reviewID, author, content, url);
+//
+//                ReviewsList.add(i, movieReview);
+//
+//            }
+//
+//
+//            for (Reviews s : ReviewsList) {
+//                Log.v(LOG_TAG, "Reviews entry: " + s);
+//
+//            }
+//
+//            return ReviewsList;
+//
+//        }
+//
+//        @Override
+//        protected ArrayList<Reviews> doInBackground(String... params) {
+//
+//            if (params.length == 0) {
+//                return null;
+//            }
+//
+//            HttpURLConnection urlConnection = null;
+//            BufferedReader reader = null;
+//
+//            // Will contain the raw JSON response as a string.
+//            String moviesJsonStr = null;
+////                String number = "209112";
+////                String mode = "reviews";
+//
+//            try {
+//
+//
+//                // Construct the URL for the moviedb query
+//                //http://api.themoviedb.org/3/movie/209112/reviews?api_key=00000000000000000000000
+//
+//
+//                final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/movie";
+//
+//                final String APPID_PARAM = "api_key";
+//                Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
+//                        .appendPath(params[0])
+//                        .appendPath("reviews")
+//                        .appendQueryParameter(APPID_PARAM, BuildConfig.TheMovieDB_API_KEY)
+//                        .build();
+//
+//                URL url = new URL(builtUri.toString());
+//                Log.v(LOG_TAG, "http://api.themoviedb.org/3/movie/209112/videos?api_key=dee364a81187df2c66fa2851bb30b111");
+//                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
+//
+//                // Create the request to OpenWeatherMap, and open the connection
+//                urlConnection = (HttpURLConnection) url.openConnection();
+//                urlConnection.setRequestMethod("GET");
+//                urlConnection.connect();
+//
+//                // Read the input stream into a String
+//                InputStream inputStream = urlConnection.getInputStream();
+//                StringBuffer buffer = new StringBuffer();
+//                if (inputStream == null) {
+//                    // Nothing to do.
+//                    return null;
+//                }
+//                reader = new BufferedReader(new InputStreamReader(inputStream));
+//                String line;
+//                while ((line = reader.readLine()) != null) {
+//
+//                    buffer.append(line + "\n");
+//                }
+//
+//                if (buffer.length() == 0) {
+//                    // Stream was empty.  No point in parsing.
+//                    return null;
+//                }
+//                moviesJsonStr = buffer.toString();
+//                // Log.v(LOG_TAG, "Movies JSON String: " + moviesJsonStr);
+//
+//            } catch (IOException e) {
+//                Log.e(LOG_TAG, "Error ", e);
+//
+//                return null;
+//            } finally {
+//                if (urlConnection != null) {
+//                    urlConnection.disconnect();
+//                }
+//                if (reader != null) {
+//                    try {
+//                        reader.close();
+//                    } catch (final IOException e) {
+//                        Log.e(LOG_TAG, "Error closing stream", e);
+//                    }
+//                }
+//            }
+//
+//            try {
+//                return getReviewsDataFromJson(moviesJsonStr);
+//            } catch (JSONException e) {
+//                Log.e(LOG_TAG, e.getMessage(), e);
+//                e.printStackTrace();
+//            }
+//            return null;
+//        }
+//
+//
+//        @Override
+//        protected void onPostExecute(ArrayList<Reviews> result) {
+//            if (result != null) {
+//                if (result != null) {
+//                    dAdapter.clear();
+//                    for (Reviews s : result) {
+//                        dAdapter.add(s);
+//                    }
+//                }
+//            }
+//        }
+//
+//
+//    }
 
     public class FetchTrailersTask extends AsyncTask<String, Void, ArrayList<ExtraBase>> {
 
@@ -446,18 +446,15 @@ boolean btnFavState = false;
 
         @Override
         protected ArrayList<ExtraBase> doInBackground(String... params) {
-            // protected String[] doInBackground(String... params){
 
-            // If there's no zip code, there's nothing to look up.  Verify size of params.
             if (params.length == 0) {
                 return null;
             }
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
+
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
-            // Will contain the raw JSON response as a string.
+
             String moviesJsonStr = null;
 
 
@@ -482,16 +479,16 @@ boolean btnFavState = false;
                 Log.v(LOG_TAG, "http://api.themoviedb.org/3/movie/209112/videos?api_key=dee364a81187df2c66fa2851bb30b111");
                 Log.v(LOG_TAG, "Built URI " + builtUri.toString());
 
-                // Create the request to OpenWeatherMap, and open the connection
+
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
 
-                // Read the input stream into a String
+
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
-                    // Nothing to do.
+
                     return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -502,11 +499,11 @@ boolean btnFavState = false;
                 }
 
                 if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
+
                     return null;
                 }
                 moviesJsonStr = buffer.toString();
-                // Log.v(LOG_TAG, "Movies JSON String: " + moviesJsonStr);
+
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -536,7 +533,7 @@ boolean btnFavState = false;
 
 
         @Override
-//        protected void onPostExecute(String[] result) {
+
         protected void onPostExecute(ArrayList<ExtraBase> result) {
             if (result != null) {
                 if (result != null) {

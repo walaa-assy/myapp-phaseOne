@@ -24,12 +24,12 @@ public class MainActivity extends ActionBarActivity implements Callback{
             else
             { mTwoPane = false; }
 
-        if (savedInstanceState == null){
+      // if (savedInstanceState == null) {}
             MoviesFragment mFragment = new MoviesFragment();
             mFragment.setListener(this);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, mFragment).commit();
 
-        }
+
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.capperboard);
